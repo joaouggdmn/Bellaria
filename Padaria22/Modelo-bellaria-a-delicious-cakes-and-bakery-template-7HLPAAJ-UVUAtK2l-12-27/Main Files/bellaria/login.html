@@ -213,8 +213,12 @@
                 <!--Login Form-->
                 <form id="myaccount-form" method="post" action="login.html">
                     <div class="form-group">
-                        <label>Usuário ou e-mail *</label>
+                        <label>Usuário*</label>
                         <input id="username" type="text" name="username" placeholder="" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email*</label>
+                        <input id="email" type="email" name="email" placeholder="" required>
                     </div>
                     
                     <div class="form-group">
@@ -235,7 +239,23 @@
                     </div>
                 </form>
             </div>
-            <!--End Login Form-->  
+            <!--End Login Form--> 
+            
+        <form id="procuraIdForm"> 
+            <div class="form-group mt-4">
+                <label for="usuario-id-input">Digite o ID do Usuário:</label>
+                <input type="text" id="usuario-id-input" class="form-control" placeholder="Digite o ID" required>
+            </div>
+                <button type="submit" class="btn btn-primary btn-lg">Buscar Usuário</button>
+        </form>
+
+        <!-- Formulário para exibir as informações do usuário -->
+        <div id="usuario" class="mt-4" style="display: none;">
+            <p><strong>ID:</strong> <span id="usuario-id"></span></p>
+            <p><strong>Nome:</strong> <span id="usuario-username"></span></p>
+            <p><strong>Email:</strong> <span id="usuario-email"></span></p>
+            <p><strong>Senha:</strong> <span id="usuario-password"></span></p>
+        </div>
         </div>
     </section>
     <!--End Login Section-->
@@ -366,10 +386,12 @@
             // Pegar os dados digitados
             username = document.getElementById("username").value;
             password = document.getElementById("password").value;
+            email = document.getElementById("email").value;
             // Criar objeto JSON
             usuarioDados = {
                 username: username,
-                password: password
+                password: password,
+                email: email
             }
             // Configurar o envio de dados
             fetch("http://localhost:8080/usuarios/login", {
@@ -381,6 +403,30 @@
                 alert("Usuário Cadastrado com Sucesso");
                 document.getElementById("myaccount-form").reset();
             })
+        })
+    </script>
+
+    <script>
+        document.getElementById("procuraIdForm").addEventListener("submit",function (event){
+            event.preventDefault()
+
+            usuarioId = document.getElementById("usuario-id-input").value;
+            fetch("http://localhost:8080/usuarios/pesquisar/" + usuarioId )
+            .then(response => {
+                return response.json();
+            })
+            .then(usuario =>{
+                document.getElementById("usuario-id").textContent = usuario.id;
+                document.getElementById("usuario-username").textContent = usuario.username;
+                document.getElementById("usuario-email").textContent = usuario.email;
+                document.getElementById("usuario-password").textContent = usuario.password;
+
+                document.getElementById("usuario").style.display = 'block';
+            })
+            .catch(error =>{
+                alert("ID nao encontrado")
+            })
+            
         })
     </script>
 
